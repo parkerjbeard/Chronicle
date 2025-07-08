@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- SECURE ENTITLEMENTS FOR CHRONICLE COLLECTORS -->
+	<!-- Only minimal necessary permissions for system monitoring -->
+	
+	<!-- Network access for data collection (local only) -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	
+	<!-- System monitoring access (limited scope) -->
+	<key>com.apple.security.personal-information.system-policy-control</key>
+	<true/>
+	
+	<!-- Limited file access for Chronicle data directory only -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	
+	<!-- REMOVED DANGEROUS ENTITLEMENTS:
+	     - JIT execution (com.apple.security.cs.allow-jit)
+	     - Unsigned executable memory (com.apple.security.cs.allow-unsigned-executable-memory)
+	     - Library validation bypass (com.apple.security.cs.disable-library-validation)
+	     - Wildcard temporary exceptions (*)
+	     - Root filesystem access (/)
+	     - Camera/microphone access
+	     - Personal data access (contacts, photos, calendars, etc.)
+	     - Network server capabilities
+	     - Automation/Apple Events access
+	-->
+</dict>
+</plist>

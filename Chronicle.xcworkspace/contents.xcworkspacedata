@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:collectors/ChronicleCollectors.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ui/ChronicleUI.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ring-buffer">
+   </FileRef>
+   <FileRef
+      location = "group:packer">
+   </FileRef>
+   <FileRef
+      location = "group:cli">
+   </FileRef>
+   <FileRef
+      location = "group:tests">
+   </FileRef>
+</Workspace>

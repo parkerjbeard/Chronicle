@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Chronicle needs camera access to capture screen activity for productivity monitoring.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Chronicle needs microphone access to detect when you're in meetings or calls.</string>
+	<key>NSSystemAdministrationUsageDescription</key>
+	<string>Chronicle needs system administration access to monitor system-wide activity.</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Chronicle needs Apple Events access to monitor application interactions.</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Chronicle needs access to your desktop folder to monitor file activity.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Chronicle needs access to your documents folder to monitor file activity.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Chronicle needs access to your downloads folder to monitor file activity.</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Chronicle needs access to network volumes to monitor file activity.</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>Chronicle needs access to removable volumes to monitor file activity.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Chronicle needs access to contacts to enrich meeting and communication data.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Chronicle needs access to calendars to correlate activity with scheduled events.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Chronicle needs access to reminders to correlate activity with tasks.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Chronicle needs access to photo library to monitor screenshot and image activity.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Chronicle needs location access to provide location-based activity context.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Chronicle needs speech recognition access to transcribe meetings and calls.</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+</dict>
+</plist>
