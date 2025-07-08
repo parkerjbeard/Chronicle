@@ -1,0 +1,56 @@
+[package]
+name = "chronicle-packer"
+version = "0.1.0"
+edition = "2021"
+authors = ["Chronicle Team"]
+description = "Chronicle packer service for processing ring buffer data to Parquet/HEIF storage"
+license = "MIT"
+
+[[bin]]
+name = "chronicle-packer"
+path = "src/main.rs"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Serialization and deserialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# CLI argument parsing
+clap = { version = "4.4", features = ["derive"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Logging and tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID generation
+uuid = { version = "1.6", features = ["v4"] }
+
+# File system operations
+walkdir = "2.4"
+tempfile = "3.8"
+
+[dev-dependencies]
+tempfile = "3.8"
+
+[features]
+default = []
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.dev]
+opt-level = 0
+debug = true
