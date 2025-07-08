@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSSupportsAutomaticTermination</key>
+	<true/>
+	<key>NSSupportsSuddenTermination</key>
+	<true/>
+	<key>NSUsageDescription</key>
+	<string>Chronicle monitors system activity to provide comprehensive system tracking and search capabilities.</string>
+	<key>NSInputMonitoringUsageDescription</key>
+	<string>Chronicle requires input monitoring permission to track keyboard and mouse activity for system monitoring.</string>
+	<key>NSScreenCaptureUsageDescription</key>
+	<string>Chronicle requires screen capture permission to monitor screen activity and content changes.</string>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>Chronicle requires accessibility permission to monitor window and application activity.</string>
+	<key>NSFullDiskAccessUsageDescription</key>
+	<string>Chronicle requires full disk access to monitor file system changes and provide complete system tracking.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Chronicle requires microphone permission to monitor audio input activity.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Chronicle requires camera permission to monitor camera activity.</string>
+	<key>NSNetworkUsageDescription</key>
+	<string>Chronicle requires network access to monitor network activity and communicate with services.</string>
+</dict>
+</plist>
