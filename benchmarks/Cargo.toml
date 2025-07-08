@@ -1,0 +1,171 @@
+[package]
+name = "chronicle-benchmarks"
+version = "0.1.0"
+edition = "2021"
+authors = ["Chronicle Team"]
+description = "Comprehensive benchmarking and performance monitoring for Chronicle"
+license = "MIT"
+repository = "https://github.com/chronicle/chronicle"
+
+[lib]
+name = "chronicle_benchmarks"
+path = "src/lib.rs"
+
+[[bin]]
+name = "monitor"
+path = "src/bin/monitor.rs"
+
+[[bin]]
+name = "benchmark-runner"
+path = "src/bin/benchmark_runner.rs"
+
+[[bin]]
+name = "dashboard"
+path = "src/bin/dashboard.rs"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+tokio-util = "0.7"
+futures = "0.3"
+
+# Benchmarking
+criterion = { version = "0.5", features = ["html_reports"] }
+indicatif = "0.17"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# Logging and tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+time = "0.3"
+
+# System monitoring
+sysinfo = "0.30"
+psutil = "3.2"
+
+# Statistics and analysis
+statrs = "0.16"
+plotters = "0.3"
+
+# Metrics collection
+prometheus = "0.13"
+metrics = "0.21"
+metrics-exporter-prometheus = "0.12"
+
+# HTTP server for dashboard
+axum = "0.7"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["fs", "cors", "trace"] }
+hyper = "1.0"
+
+# Configuration
+config = "0.14"
+dirs = "5.0"
+
+# CLI
+clap = { version = "4.4", features = ["derive"] }
+
+# Storage and databases
+rusqlite = { version = "0.31", features = ["bundled"] }
+heed = "0.20"
+
+# Compression
+flate2 = "1.0"
+zstd = "0.13"
+
+# Hashing
+sha2 = "0.10"
+blake3 = "1.5"
+
+# UUID generation
+uuid = { version = "1.6", features = ["v4"] }
+
+# Random number generation
+rand = "0.8"
+
+# Additional dependencies
+hostname = "0.3"
+
+# CPU detection
+num_cpus = "1.16"
+
+# Memory mapping
+memmap2 = "0.9"
+
+# File system operations
+walkdir = "2.4"
+tempfile = "3.8"
+
+# Networking
+reqwest = { version = "0.11", features = ["json"] }
+
+# Template engine for reports
+handlebars = "4.5"
+
+# Web assets
+include_dir = "0.7"
+
+# Process management
+procfs = "0.16"
+
+# Ring buffer FFI (for benchmarking)
+libc = "0.2"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+proptest = "1.4"
+tokio-test = "0.4"
+tempfile = "3.8"
+
+[features]
+default = ["web-dashboard"]
+web-dashboard = []
+extended-analysis = []
+
+[[bench]]
+name = "ring_buffer_bench"
+harness = false
+
+[[bench]]
+name = "collectors_bench"
+harness = false
+
+[[bench]]
+name = "packer_bench"
+harness = false
+
+[[bench]]
+name = "search_bench"
+harness = false
+
+[[bench]]
+name = "storage_bench"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.bench]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = true
