@@ -1,0 +1,95 @@
+[workspace]
+members = [
+    "packer",
+    "cli",
+    "tests",
+    "benchmarks",
+]
+
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Chronicle Team <support@chronicle.dev>"]
+license = "MIT"
+homepage = "https://github.com/your-org/chronicle"
+repository = "https://github.com/your-org/chronicle"
+description = "A local-only, lossless lifelogger for macOS"
+keywords = ["lifelogger", "macos", "privacy", "monitoring"]
+categories = ["command-line-utilities", "development-tools"]
+
+[workspace.dependencies]
+# Core async runtime - Compatible with Rust 1.76.0
+tokio = { version = "1.35", features = ["full"] }
+futures = "0.3.30"
+
+# Serialization - Compatible versions
+serde = { version = "1.0.196", features = ["derive"] }
+serde_json = "1.0.113"
+toml = "0.8.10"
+
+# Error handling - Compatible versions
+anyhow = "1.0.79"
+thiserror = "1.0.56"
+
+# Logging - Compatible versions
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+
+# CLI - Compatible version
+clap = { version = "4.4.18", features = ["derive"] }
+
+# Data processing - Compatible versions
+arrow = "50.0.0"
+parquet = "50.0.0"
+
+# Encryption - Compatible secure versions
+aes-gcm = "0.10.3"
+argon2 = "0.5.3"
+ring = "0.16.20"
+
+# Compression - Compatible version
+flate2 = "1.0.28"
+
+# Date/time - Compatible version
+chrono = { version = "0.4.33", features = ["serde"] }
+
+# System information - Compatible version
+sysinfo = "0.30.5"
+
+# Configuration - Compatible version
+config = "0.14.0"
+
+# Metrics - Compatible version
+prometheus = "0.13.3"
+
+# Testing - Compatible versions
+criterion = "0.5.1"
+tempfile = "3.9.0"
+
+# Security dependencies - Compatible versions
+jsonwebtoken = "9.2"
+rand = "0.8.5"
+base64 = "0.21.7"
+zeroize = { version = "1.7.0", features = ["derive"] }
+blake3 = "1.5.0"
+sha2 = "0.10.8"
+uuid = { version = "1.7.0", features = ["v4", "serde"] }
+hex = "0.4.3"
+
+[profile.release]
+debug = true
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+
+[profile.dev]
+debug = true
+opt-level = 0
+incremental = true
+
+[profile.test]
+debug = true
+opt-level = 1

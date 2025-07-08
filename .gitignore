@@ -1,0 +1,91 @@
+# Build artifacts
+build/
+target/
+dist/
+*.o
+*.a
+*.dSYM/
+*.xcarchive/
+
+# Xcode
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.dSYM.zip
+
+# Rust
+Cargo.lock
+!packer/Cargo.lock
+!cli/Cargo.lock  
+!tests/Cargo.lock
+!benchmarks/Cargo.lock
+/target/
+
+# C/C++
+*.o
+*.a
+*.so
+*.dylib
+
+# Testing executables and temp files
+test_*
+!test_*.rs
+!test_*.swift
+!test_*.c
+!tests/
+bench_*
+!bench_*.rs
+!bench_*.swift
+!bench_*.c
+security_runner
+test_runner
+
+# Development documentation (not for production)
+API_REFERENCE.md
+ARCHITECTURE.md
+DEVELOPER_GUIDE.md
+FUTURE_PROOFING_GUIDE.md
+PROJECT_STATUS.md
+PROJECT_SUMMARY.md
+SECURITY_AUDIT_REPORT.md
+FINAL_SECURITY_AUDIT_REPORT.md
+SECURITY_FIXES_SUMMARY.md
+outline.md
+technical_spec.md
+
+# Logs
+logs/
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Test data
+test_data/
+*.parquet
+*.heic
+
+# Configuration
+chronicle.toml
+!config/chronicle.toml.example
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/

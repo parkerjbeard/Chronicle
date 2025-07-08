@@ -1,0 +1,83 @@
+# Chronicle Configuration File
+# Copy this to ~/.config/chronicle/config.toml and customize
+
+[capture]
+# Screen capture settings
+screen_fps_active = 1.0
+screen_fps_idle = 0.2
+idle_threshold_seconds = 30
+
+# Enable/disable collectors
+keyboard_enabled = true
+mouse_enabled = true
+clipboard_enabled = true
+network_enabled = true
+filesystem_enabled = true
+audio_enabled = true
+window_enabled = true
+screen_enabled = true
+
+# Capture filters
+exclude_apps = [
+    "com.apple.keychainaccess",
+    "com.apple.SecurityAgent"
+]
+
+[storage]
+# Base path for Chronicle data
+base_path = "/ChronicleRaw"
+
+# Retention policy
+retention_days = 60
+max_disk_usage_gb = 500
+
+# Compression settings
+compression_level = 6
+frame_quality = 0.8
+
+# Encryption settings
+encryption_enabled = true
+key_derivation_iterations = 100000
+
+[backup]
+# Backup settings
+enabled = true
+destination = "/Volumes/Backup/Chronicle"
+schedule = "daily"
+remove_after_backup = true
+verify_backup = true
+
+# Backup retention
+backup_retention_days = 365
+max_backup_size_gb = 1000
+
+[performance]
+# Ring buffer settings
+ring_buffer_size_mb = 64
+max_events_per_second = 1000
+backpressure_threshold = 0.8
+
+# CPU throttling
+max_cpu_percent = 3.0
+thermal_throttling = true
+
+[privacy]
+# Privacy settings
+secret_detection = true
+clipboard_max_size_kb = 32
+log_level = "info"
+
+# Audit settings
+audit_enabled = true
+audit_retention_days = 30
+
+[network]
+# Network monitoring
+monitor_dns = true
+monitor_tcp_syn = true
+aggregate_by_domain = true
+sample_rate = 1.0
+
+# Exclude local traffic
+exclude_local_traffic = true
+exclude_vpn_traffic = false
