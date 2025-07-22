@@ -15,15 +15,15 @@ path = "src/main.rs"
 
 [dependencies]
 # CLI framework
-clap = { version = "4.0", features = ["derive", "env", "color"] }
-clap_complete = "4.0"
+clap = { workspace = true }
+clap_complete = "4.4.9"
 
 # Async runtime - Use workspace version
 tokio = { workspace = true }
 
 # Data processing - Use workspace versions
-arrow = { workspace = true }
-parquet = { workspace = true }
+# arrow = { workspace = true } # Disabled for compatibility testing 
+# parquet = { workspace = true }
 
 # Serialization - Use workspace versions
 serde = { workspace = true }
@@ -37,17 +37,16 @@ indicatif = "0.17"
 console = "0.15"
 
 # Network
-reqwest = { version = "0.11", features = ["json", "stream", "rustls-tls", "cookies"] }
+reqwest = { version = "0.11.24", features = ["json", "stream", "rustls-tls", "cookies"] }
 
-# Security
-jsonwebtoken = "9.3"
-ring = "0.17"
-rand = "0.8"
-base64 = "0.22"
-rcgen = "0.12"
-rustls = "0.23"
-tokio-rustls = "0.26"
-rustls-pemfile = "2.1"
+# Security - Use workspace versions
+jsonwebtoken = { workspace = true }
+rand = { workspace = true }
+base64 = { workspace = true }
+rcgen = "0.10.0"
+rustls = "0.21.12"
+tokio-rustls = "0.24.1"
+rustls-pemfile = "1.0.4"
 
 # Date/time - Use workspace version
 chrono = { workspace = true }
@@ -91,10 +90,10 @@ blake3 = "1.0"
 sysinfo = { workspace = true }
 
 [dev-dependencies]
-tokio-test = "0.4"
-tempfile = "3.0"
-assert_cmd = "2.0"
-predicates = "3.0"
+tokio-test = { workspace = true }
+tempfile = { workspace = true }
+assert_cmd = { workspace = true }
+predicates = { workspace = true }
 
 [features]
 default = ["colors"]

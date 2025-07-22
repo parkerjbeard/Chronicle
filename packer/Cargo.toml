@@ -18,9 +18,9 @@ tokio-cron-scheduler = "0.10"
 tokio-util = "0.7"
 
 # Arrow and Parquet processing
-arrow = "50.0"
-arrow-ipc = "50.0"
-parquet = "50.0"
+# arrow = "50.0" # Disabled for compatibility testing
+# arrow-ipc = "50.0"
+# parquet = "50.0"
 datafusion = "34.0"
 
 # Serialization and deserialization
@@ -86,6 +86,12 @@ blake3 = "1.5"
 # UUID generation
 uuid = { version = "1.6", features = ["v4"] }
 
+# AWS SDK for S3 cloud backup - Compatible versions
+aws-config = { version = "0.56.1", optional = true }
+aws-sdk-s3 = { version = "0.36.0", optional = true }
+aws-types = { version = "0.56.1", optional = true }
+aws-credential-types = { version = "0.56.1", optional = true }
+
 # CPU detection
 num_cpus = "1.16"
 
@@ -102,7 +108,7 @@ tower-http = { version = "0.5", features = ["cors", "limit", "timeout", "trace"]
 
 # Security and authentication - Compatible with Rust 1.76.0
 jsonwebtoken = "9.2"
-ring = "0.16.20"
+# ring = "0.16.20" # Removed to avoid edition2024 dependency conflicts
 rustls = "0.21.12"
 tokio-rustls = "0.24.1"
 rustls-pemfile = "1.0.4"
@@ -121,22 +127,28 @@ time = { version = "0.3", features = ["parsing", "formatting", "macros"] }
 regex = "1.10"
 unicode-general-category = "0.6"
 
+# HTTP client for cloud operations
+reqwest = { version = "0.11.24", features = ["json", "rustls-tls", "stream"], optional = true }
+bytes = "1.5"
+
 # Platform-specific features for macOS
 [target.'cfg(target_os = "macos")'.dependencies]
 security-framework = "2.9"
 core-foundation = "0.9"
 
 [dev-dependencies]
-criterion = { version = "0.5", features = ["html_reports"] }
-proptest = "1.4"
-tokio-test = "0.4"
-tempfile = "3.8"
-futures = "0.3"
+criterion = { workspace = true, features = ["html_reports"] }
+proptest = "1.4.0"
+tokio-test = { workspace = true }
+tempfile = { workspace = true }
+futures = { workspace = true }
 
 [features]
 default = ["encryption", "metrics"]
 encryption = []
 metrics = ["prometheus"]
+cloud-backup = ["aws-config", "aws-sdk-s3", "aws-types", "aws-credential-types", "reqwest"]
+auto-backup = []
 
 [[bench]]
 name = "packer_benchmarks"

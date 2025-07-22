@@ -40,14 +40,13 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 # CLI - Compatible version
 clap = { version = "4.4.18", features = ["derive"] }
 
-# Data processing - Compatible versions
-arrow = "50.0.0"
-parquet = "50.0.0"
+# Data processing - Disabled for testing compatibility
+# arrow = "48.0.1" 
+# parquet = "48.0.1"
 
-# Encryption - Compatible secure versions
-aes-gcm = "0.10.3"
-argon2 = "0.5.3"
-ring = "0.16.20"
+# Encryption - Compatible secure versions  
+aes-gcm = "0.9.4"
+argon2 = "0.4.1"
 
 # Compression - Compatible version
 flate2 = "1.0.28"
@@ -66,16 +65,19 @@ prometheus = "0.13.3"
 
 # Testing - Compatible versions
 criterion = "0.5.1"
-tempfile = "3.9.0"
+tempfile = "3.8.4"
+assert_cmd = "2.0.12"
+predicates = "3.0.4"
+tokio-test = "0.4.3"
 
 # Security dependencies - Compatible versions
-jsonwebtoken = "9.2"
+jsonwebtoken = "8.3.0"
 rand = "0.8.5"
-base64 = "0.21.7"
-zeroize = { version = "1.7.0", features = ["derive"] }
-blake3 = "1.5.0"
-sha2 = "0.10.8"
-uuid = { version = "1.7.0", features = ["v4", "serde"] }
+base64 = "0.21.0"
+zeroize = { version = "1.6.0", features = ["derive"] }
+blake3 = "1.4.0"
+sha2 = "0.10.6"
+uuid = { version = "1.6.0", features = ["v4", "serde"] }
 hex = "0.4.3"
 
 [profile.release]
