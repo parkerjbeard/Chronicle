@@ -14,6 +14,8 @@ pub mod metrics;
 pub mod schema_versioning;
 pub mod key_management;
 pub mod flexible_config;
+pub mod auto_backup;
+pub mod cloud_backup;
 
 // Security modules
 pub mod auth;
@@ -33,3 +35,5 @@ pub use metrics::MetricsCollector;
 pub use schema_versioning::{SchemaVersion, SchemaRegistry, SchemaMetadata};
 pub use key_management::{KeyManager, KeyType, KeyRotationPolicy, KeyStatus};
 pub use flexible_config::{FlexibleConfig, ConfigValue, ConfigSection, Configurable, ChronicleConfig};
+pub use auto_backup::{AutoBackupService, AutoBackupConfig, DriveIdentifier, DriveEvent, DriveAction, AutoBackupStatus};
+pub use cloud_backup::{CloudBackupService, CloudBackupConfig, CloudProvider, BackupSchedule, S3BackupConfig, S3StorageClass, CloudBackupStatus};

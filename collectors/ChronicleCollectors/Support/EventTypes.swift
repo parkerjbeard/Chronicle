@@ -22,6 +22,7 @@ public enum ChronicleEventType: String, CaseIterable, Codable {
     case audioActivity = "audio_activity"
     case networkActivity = "network_activity"
     case systemActivity = "system_activity"
+    case driveActivity = "drive_activity"
 }
 
 /// Base event structure for all Chronicle events
@@ -431,4 +432,66 @@ extension CGSize: Codable {
     private enum CodingKeys: String, CodingKey {
         case width, height
     }
+}
+
+/// Drive activity event data
+public struct DriveActivityEventData: Codable {
+    public let driveIdentifier: DriveIdentifier
+    public let action: DriveAction
+    public let mountPoint: String?
+    public let fileSystem: String?
+    public let totalSize: UInt64?
+    public let availableSize: UInt64?
+    public let isRemovable: Bool
+    public let isInternal: Bool
+    public let connectionType: String?
+    public let deviceName: String?
+    public let vendorName: String?
+    public let productName: String?
+    public let serialNumber: String?
+    
+    public init(driveIdentifier: DriveIdentifier, action: DriveAction, mountPoint: String? = nil,
+                fileSystem: String? = nil, totalSize: UInt64? = nil, availableSize: UInt64? = nil,
+                isRemovable: Bool, isInternal: Bool, connectionType: String? = nil,
+                deviceName: String? = nil, vendorName: String? = nil, productName: String? = nil,
+                serialNumber: String? = nil) {
+        self.driveIdentifier = driveIdentifier
+        self.action = action
+        self.mountPoint = mountPoint
+        self.fileSystem = fileSystem
+        self.totalSize = totalSize
+        self.availableSize = availableSize
+        self.isRemovable = isRemovable
+        self.isInternal = isInternal
+        self.connectionType = connectionType
+        self.deviceName = deviceName
+        self.vendorName = vendorName
+        self.productName = productName
+        self.serialNumber = serialNumber
+    }
+}
+
+/// Drive identifier structure
+public struct DriveIdentifier: Codable {
+    public let uuid: String?
+    public let bsdName: String?
+    public let volumeLabel: String?
+    public let serialNumber: String?
+    
+    public init(uuid: String? = nil, bsdName: String? = nil, volumeLabel: String? = nil, serialNumber: String? = nil) {
+        self.uuid = uuid
+        self.bsdName = bsdName
+        self.volumeLabel = volumeLabel
+        self.serialNumber = serialNumber
+    }
+}
+
+/// Drive action enumeration
+public enum DriveAction: String, Codable {
+    case mounted = "mounted"
+    case unmounted = "unmounted"
+    case appeared = "appeared"
+    case disappeared = "disappeared"
+    case ejected = "ejected"
+    case remounted = "remounted"
 }

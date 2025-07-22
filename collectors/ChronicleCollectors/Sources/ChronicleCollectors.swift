@@ -37,6 +37,7 @@ public class ChronicleCollectors: ObservableObject {
     private var fsMonCollector: FSMonCollector?
     private var audioMonCollector: AudioMonCollector?
     private var netMonCollector: NetMonCollector?
+    private var driveMonCollector: DriveMonCollector?
     
     // MARK: - Initialization
     
@@ -101,6 +102,13 @@ public class ChronicleCollectors: ObservableObject {
             permissionManager: permissionManager
         )
         
+        driveMonCollector = DriveMonCollector(
+            configuration: configManager.getCollectorConfig("drive_mon"),
+            ringBufferWriter: ringBufferWriter,
+            permissionManager: permissionManager,
+            targetDrives: configManager.getAutoBackupTargetDrives()
+        )
+        
         // Register collectors
         if let collector = keyTapCollector {
             collectors[collector.identifier] = collector
@@ -124,6 +132,9 @@ public class ChronicleCollectors: ObservableObject {
             collectors[collector.identifier] = collector
         }
         if let collector = netMonCollector {
+            collectors[collector.identifier] = collector
+        }
+        if let collector = driveMonCollector {
             collectors[collector.identifier] = collector
         }
         

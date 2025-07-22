@@ -164,6 +164,8 @@ public struct ChronicleConfig: Codable {
     public let privacy: PrivacyConfig
     public let performance: PerformanceConfig
     public let logging: LoggingConfig
+    public let autoBackup: AutoBackupConfig
+    public let cloudBackup: CloudBackupConfig
     
     public init(version: String = "1.0.0",
                 createdAt: Date = Date(),
@@ -173,7 +175,9 @@ public struct ChronicleConfig: Codable {
                 collectors: [String: CollectorConfiguration] = [:],
                 privacy: PrivacyConfig = PrivacyConfig(),
                 performance: PerformanceConfig = PerformanceConfig(),
-                logging: LoggingConfig = LoggingConfig()) {
+                logging: LoggingConfig = LoggingConfig(),
+                autoBackup: AutoBackupConfig = AutoBackupConfig(),
+                cloudBackup: CloudBackupConfig = CloudBackupConfig()) {
         self.version = version
         self.createdAt = createdAt
         self.modifiedAt = modifiedAt
@@ -183,6 +187,8 @@ public struct ChronicleConfig: Codable {
         self.privacy = privacy
         self.performance = performance
         self.logging = logging
+        self.autoBackup = autoBackup
+        self.cloudBackup = cloudBackup
     }
     
     public static let `default` = ChronicleConfig(
@@ -231,6 +237,12 @@ public struct ChronicleConfig: Codable {
                 enabled: true,
                 sampleRate: 1.0,
                 activeFrameRate: 0.5,
+                idleFrameRate: 0.1
+            ),
+            "drive_mon": CollectorConfiguration(
+                enabled: true,
+                sampleRate: 1.0,
+                activeFrameRate: 1.0,
                 idleFrameRate: 0.1
             )
         ]
@@ -397,6 +409,49 @@ extension ChronicleConfig {
                 throw ChronicleCollectorError.configurationError("Idle frame rate for \(collectorId) must be greater than 0")
             }
         }
+        
+        // Validate auto-backup configuration
+        if autoBackup.enabled {
+            guard !autoBackup.backupDestinationPath.isEmpty else {
+                throw ChronicleCollectorError.configurationError("Auto-backup destination path cannot be empty")
+            }
+            
+            guard autoBackup.retryAttempts > 0 && autoBackup.retryAttempts <= 10 else {
+                throw ChronicleCollectorError.configurationError("Auto-backup retry attempts must be between 1 and 10")
+            }
+            
+            guard autoBackup.retryDelay > 0 else {
+                throw ChronicleCollectorError.configurationError("Auto-backup retry delay must be greater than 0")
+            }
+        }
+        
+        // Validate cloud backup configuration
+        if cloudBackup.enabled {
+            guard cloudBackup.retentionDays > 0 && cloudBackup.retentionDays <= 3650 else {
+                throw ChronicleCollectorError.configurationError("Cloud backup retention days must be between 1 and 3650 (10 years)")
+            }
+            
+            guard cloudBackup.maxBackupSize > 0 else {
+                throw ChronicleCollectorError.configurationError("Cloud backup max size must be greater than 0")
+            }
+            
+            if let s3Config = cloudBackup.s3Config {
+                guard !s3Config.bucketName.isEmpty else {
+                    throw ChronicleCollectorError.configurationError("S3 bucket name cannot be empty")
+                }
+                
+                guard !s3Config.region.isEmpty else {
+                    throw ChronicleCollectorError.configurationError("S3 region cannot be empty")
+                }
+                
+                // Validate S3 bucket name format (basic validation)
+                let bucketNameRegex = try! NSRegularExpression(pattern: "^[a-z0-9][a-z0-9\\-]*[a-z0-9]$")
+                let bucketNameRange = NSRange(location: 0, length: s3Config.bucketName.utf16.count)
+                guard bucketNameRegex.firstMatch(in: s3Config.bucketName, options: [], range: bucketNameRange) != nil else {
+                    throw ChronicleCollectorError.configurationError("S3 bucket name format is invalid")
+                }
+            }
+        }
     }
 }
 
@@ -435,4 +490,144 @@ extension ConfigManager {
         
         return envConfig
     }
+    
+    /// Get auto-backup target drives
+    public func getAutoBackupTargetDrives() -> [DriveIdentifier] {
+        return config.autoBackup.targetDrives
+    }
+    
+    /// Update auto-backup target drives
+    public func updateAutoBackupTargetDrives(_ drives: [DriveIdentifier]) throws {
+        var newConfig = config
+        newConfig.autoBackup.targetDrives = drives
+        try saveConfiguration(newConfig)
+    }
+}
+
+/// Auto-backup configuration
+public struct AutoBackupConfig: Codable {
+    public let enabled: Bool
+    public var targetDrives: [DriveIdentifier]
+    public let removeLocalAfterBackup: Bool
+    public let verificationRequired: Bool
+    public let backupDestinationPath: String
+    public let encryptionEnabled: Bool
+    public let compressionEnabled: Bool
+    public let retryAttempts: Int
+    public let retryDelay: TimeInterval
+    
+    public init(enabled: Bool = false,
+                targetDrives: [DriveIdentifier] = [],
+                removeLocalAfterBackup: Bool = false,
+                verificationRequired: Bool = true,
+                backupDestinationPath: String = "/Chronicle",
+                encryptionEnabled: Bool = true,
+                compressionEnabled: Bool = true,
+                retryAttempts: Int = 3,
+                retryDelay: TimeInterval = 60.0) {
+        self.enabled = enabled
+        self.targetDrives = targetDrives
+        self.removeLocalAfterBackup = removeLocalAfterBackup
+        self.verificationRequired = verificationRequired
+        self.backupDestinationPath = backupDestinationPath
+        self.encryptionEnabled = encryptionEnabled
+        self.compressionEnabled = compressionEnabled
+        self.retryAttempts = retryAttempts
+        self.retryDelay = retryDelay
+    }
+}
+
+/// Cloud backup configuration
+public struct CloudBackupConfig: Codable {
+    public let enabled: Bool
+    public let provider: CloudProvider
+    public let s3Config: S3BackupConfig?
+    public let continuousBackup: Bool
+    public let schedule: BackupSchedule
+    public let encryptionEnabled: Bool
+    public let clientSideEncryption: Bool
+    public let retentionDays: Int
+    public let maxBackupSize: UInt64
+    public let compressionEnabled: Bool
+    
+    public init(enabled: Bool = false,
+                provider: CloudProvider = .s3,
+                s3Config: S3BackupConfig? = nil,
+                continuousBackup: Bool = false,
+                schedule: BackupSchedule = .daily,
+                encryptionEnabled: Bool = true,
+                clientSideEncryption: Bool = true,
+                retentionDays: Int = 90,
+                maxBackupSize: UInt64 = 1024 * 1024 * 1024 * 10, // 10GB
+                compressionEnabled: Bool = true) {
+        self.enabled = enabled
+        self.provider = provider
+        self.s3Config = s3Config
+        self.continuousBackup = continuousBackup
+        self.schedule = schedule
+        self.encryptionEnabled = encryptionEnabled
+        self.clientSideEncryption = clientSideEncryption
+        self.retentionDays = retentionDays
+        self.maxBackupSize = maxBackupSize
+        self.compressionEnabled = compressionEnabled
+    }
+}
+
+/// S3 backup configuration
+public struct S3BackupConfig: Codable {
+    public let bucketName: String
+    public let region: String
+    public let prefix: String
+    public let accessKeyId: String?
+    public let secretAccessKey: String?
+    public let useInstanceProfile: Bool
+    public let storageClass: S3StorageClass
+    public let serverSideEncryption: Bool
+    public let kmsKeyId: String?
+    
+    public init(bucketName: String,
+                region: String = "us-west-2",
+                prefix: String = "chronicle-data",
+                accessKeyId: String? = nil,
+                secretAccessKey: String? = nil,
+                useInstanceProfile: Bool = false,
+                storageClass: S3StorageClass = .standardIA,
+                serverSideEncryption: Bool = true,
+                kmsKeyId: String? = nil) {
+        self.bucketName = bucketName
+        self.region = region
+        self.prefix = prefix
+        self.accessKeyId = accessKeyId
+        self.secretAccessKey = secretAccessKey
+        self.useInstanceProfile = useInstanceProfile
+        self.storageClass = storageClass
+        self.serverSideEncryption = serverSideEncryption
+        self.kmsKeyId = kmsKeyId
+    }
+}
+
+/// Cloud provider enumeration
+public enum CloudProvider: String, Codable {
+    case s3 = "s3"
+    case gcp = "gcp"
+    case azure = "azure"
+}
+
+/// Backup schedule enumeration
+public enum BackupSchedule: String, Codable {
+    case realtime = "realtime"
+    case hourly = "hourly"
+    case daily = "daily"
+    case weekly = "weekly"
+    case monthly = "monthly"
+}
+
+/// S3 storage class enumeration
+public enum S3StorageClass: String, Codable {
+    case standard = "STANDARD"
+    case standardIA = "STANDARD_IA"
+    case oneZoneIA = "ONEZONE_IA"
+    case glacier = "GLACIER"
+    case glacierInstantRetrieval = "GLACIER_IR"
+    case deepArchive = "DEEP_ARCHIVE"
 }
