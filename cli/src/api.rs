@@ -97,6 +97,24 @@ pub struct BackupRequest {
     pub include_metadata: bool,
     pub compression: Option<String>,
     pub encryption: Option<String>,
+    pub cloud_backup: Option<CloudBackupOptions>,
+    pub auto_backup: Option<AutoBackupOptions>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CloudBackupOptions {
+    pub enabled: bool,
+    pub s3_uri: Option<String>,
+    pub continuous: bool,
+    pub client_side_encryption: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AutoBackupOptions {
+    pub enabled: bool,
+    pub target_drive: Option<String>,
+    pub drive_id_type: String,
+    pub remove_local_after_backup: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

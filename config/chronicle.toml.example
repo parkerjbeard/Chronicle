@@ -81,3 +81,69 @@ sample_rate = 1.0
 # Exclude local traffic
 exclude_local_traffic = true
 exclude_vpn_traffic = false
+
+[auto_backup]
+# Auto-backup to external drives
+enabled = false
+remove_local_after_backup = false
+verification_required = true
+backup_destination_path = "/Chronicle"
+encryption_enabled = true
+compression_enabled = true
+retry_attempts = 3
+retry_delay_seconds = 60
+
+# Target drives for auto-backup (can specify multiple drives)
+[[auto_backup.target_drives]]
+type = "uuid"
+identifier = "12345678-1234-1234-1234-123456789ABC"
+
+[[auto_backup.target_drives]]
+type = "volume_label"
+identifier = "MyBackupDrive"
+
+[[auto_backup.target_drives]]
+type = "serial_number"
+identifier = "WD1234567890"
+
+[cloud_backup]
+# Cloud backup settings
+enabled = false
+provider = "s3"  # s3, gcp, azure
+continuous_backup = false
+schedule = "daily"  # realtime, hourly, daily, weekly, monthly
+encryption_enabled = true
+client_side_encryption = true
+retention_days = 90
+max_backup_size_gb = 10
+compression_enabled = true
+
+[cloud_backup.s3]
+# S3-specific configuration
+bucket_name = "my-chronicle-backups"
+region = "us-west-2"
+prefix = "chronicle-data"
+storage_class = "STANDARD_IA"  # STANDARD, STANDARD_IA, ONEZONE_IA, GLACIER, GLACIER_IR, DEEP_ARCHIVE
+server_side_encryption = true
+# kms_key_id = "arn:aws:kms:us-west-2:123456789012:key/12345678-1234-1234-1234-123456789012"
+
+# AWS credentials (optional - can use IAM roles, profiles, or environment variables)
+# access_key_id = "AKIAIOSFODNN7EXAMPLE"
+# secret_access_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+# use_instance_profile = false
+
+[drive_monitoring]
+# Drive monitoring settings
+enabled = true
+monitor_all_drives = true
+notify_on_connection = true
+log_drive_events = true
+
+# Sample rate for drive monitoring (0.0 to 1.0)
+sample_rate = 1.0
+
+# Monitoring options
+monitor_usb_drives = true
+monitor_thunderbolt_drives = true
+monitor_firewire_drives = true
+monitor_internal_drives = false

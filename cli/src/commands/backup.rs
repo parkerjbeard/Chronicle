@@ -1,4 +1,4 @@
-use crate::api::{ChronicleClient, BackupRequest, BackupResponse};
+use crate::api::{ChronicleClient, BackupRequest, BackupResponse, CloudBackupOptions, AutoBackupOptions};
 use crate::error::{ChronicleError, Result};
 use crate::output::OutputManager;
 use crate::utils;
@@ -51,6 +51,34 @@ pub struct BackupArgs {
     /// Dry run (show what would be backed up)
     #[arg(long)]
     pub dry_run: bool,
+
+    /// Enable cloud backup to S3
+    #[arg(long)]
+    pub cloud: bool,
+
+    /// S3 bucket URI (s3://bucket/prefix)
+    #[arg(long)]
+    pub s3_uri: Option<String>,
+
+    /// Enable continuous backup mode
+    #[arg(long)]
+    pub continuous: bool,
+
+    /// Configure auto-backup for external drives
+    #[arg(long)]
+    pub auto_backup: bool,
+
+    /// Target drive identifier for auto-backup (UUID, volume label, or serial)
+    #[arg(long)]
+    pub target_drive: Option<String>,
+
+    /// Drive identifier type (uuid, volume_label, serial_number)
+    #[arg(long, default_value = "uuid")]
+    pub drive_id_type: String,
+
+    /// Remove local files after successful backup (DANGEROUS)
+    #[arg(long)]
+    pub remove_local: bool,
 }
 
 pub async fn run(args: BackupArgs, client: ChronicleClient, output: OutputManager) -> Result<()> {
@@ -94,12 +122,64 @@ pub async fn run(args: BackupArgs, client: ChronicleClient, output: OutputManage
         }
     };
 
+    // Validate and create cloud backup options
+    let cloud_backup = if args.cloud {
+        // Validate S3 URI if provided
+        if let Some(s3_uri) = &args.s3_uri {
+            if !s3_uri.starts_with("s3://") {
+                return Err(ChronicleError::InvalidQuery(
+                    "S3 URI must start with 's3://'".to_string(),
+                ));
+            }
+        }
+
+        Some(CloudBackupOptions {
+            enabled: true,
+            s3_uri: args.s3_uri.clone(),
+            continuous: args.continuous,
+            client_side_encryption: true, // Always enable for privacy
+        })
+    } else {
+        None
+    };
+
+    // Validate and create auto-backup options
+    let auto_backup = if args.auto_backup {
+        // Validate drive identifier type
+        if !matches!(args.drive_id_type.as_str(), "uuid" | "volume_label" | "serial_number") {
+            return Err(ChronicleError::InvalidQuery(
+                "Drive ID type must be one of: uuid, volume_label, serial_number".to_string(),
+            ));
+        }
+
+        // Warn about remove_local option
+        if args.remove_local {
+            let confirmed = output.prompt_confirm(
+                "WARNING: This will remove local files after backup. This action is irreversible. Continue?"
+            )?;
+            if !confirmed {
+                return Err(ChronicleError::Cancelled);
+            }
+        }
+
+        Some(AutoBackupOptions {
+            enabled: true,
+            target_drive: args.target_drive.clone(),
+            drive_id_type: args.drive_id_type.clone(),
+            remove_local_after_backup: args.remove_local,
+        })
+    } else {
+        None
+    };
+
     // Create backup request
     let backup_request = BackupRequest {
         destination: args.destination.clone(),
         include_metadata: args.include_metadata,
         compression: args.compression.clone(),
         encryption,
+        cloud_backup,
+        auto_backup,
     };
 
     // Show backup plan
@@ -215,6 +295,28 @@ async fn display_backup_plan(
     
     if let Some(event_types) = &args.event_types {
         output.print_key_value("Event types", event_types)?;
+    }
+    
+    // Display cloud backup options
+    if let Some(cloud_backup) = &request.cloud_backup {
+        output.print_key_value("Cloud backup", "Enabled")?;
+        if let Some(s3_uri) = &cloud_backup.s3_uri {
+            output.print_key_value("S3 URI", s3_uri)?;
+        }
+        output.print_key_value("Continuous backup", &cloud_backup.continuous.to_string())?;
+        output.print_key_value("Client-side encryption", &cloud_backup.client_side_encryption.to_string())?;
+    }
+    
+    // Display auto-backup options
+    if let Some(auto_backup) = &request.auto_backup {
+        output.print_key_value("Auto-backup", "Enabled")?;
+        if let Some(target_drive) = &auto_backup.target_drive {
+            output.print_key_value("Target drive", target_drive)?;
+            output.print_key_value("Drive ID type", &auto_backup.drive_id_type)?;
+        }
+        if auto_backup.remove_local_after_backup {
+            output.print_key_value("Remove local files", "YES (DANGEROUS)")?;
+        }
     }
     
     // Check available space
