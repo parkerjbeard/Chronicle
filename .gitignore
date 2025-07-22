@@ -89,3 +89,18 @@ chronicle.toml
 *.tmp
 *.temp
 /tmp/
+# Additional test artifacts to ignore (duplicates/temporary files)
+security_tests.rs
+simplified_security_tests.rs  
+test_flexible_config.rs
+test_integrated_systems.rs
+test_key_management.rs
+test_key_management_secure.rs
+test_key_management_simple.rs
+test_runner.rs
+test_schema.rs
+config_validation_tests.rs
+performance_tests.rs
+run_tests.rs
+lib.rs.backup
+
