@@ -67,6 +67,195 @@ fn test_backup_command_help() {
 }
 
 #[test]
+fn test_backup_with_cloud_options() {
+    let temp_dir = TempDir::new().unwrap();
+    let backup_path = temp_dir.path().join("cloud_backup.tar.gz");
+    
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--cloud",
+        "--s3-uri", "s3://test-bucket/chronicle",
+        "--dry-run"
+    ]);
+    
+    cmd.assert().success();
+}
+
+#[test]
+fn test_backup_with_auto_backup_options() {
+    let temp_dir = TempDir::new().unwrap();
+    let backup_path = temp_dir.path().join("auto_backup.tar.gz");
+    
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--auto-backup",
+        "--target-drive", "12345678-1234-1234-1234-123456789ABC",
+        "--drive-id-type", "uuid",
+        "--dry-run"
+    ]);
+    
+    cmd.assert().success();
+}
+
+#[test]
+fn test_backup_with_compression() {
+    let temp_dir = TempDir::new().unwrap();
+    
+    let compression_types = ["gzip", "bzip2", "lz4"];
+    
+    for compression in &compression_types {
+        let backup_path = temp_dir.path().join(format!("backup_{}.tar.gz", compression));
+        
+        let mut cmd = Command::cargo_bin("chronictl").unwrap();
+        cmd.args([
+            "backup",
+            "--destination", backup_path.to_str().unwrap(),
+            "--compression", compression,
+            "--dry-run"
+        ]);
+        
+        cmd.assert().success();
+    }
+}
+
+#[test]
+fn test_backup_with_encryption() {
+    let temp_dir = TempDir::new().unwrap();
+    let backup_path = temp_dir.path().join("encrypted_backup.tar.gz");
+    
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--encryption", "test_password",
+        "--dry-run"
+    ]);
+    
+    cmd.assert().success();
+}
+
+#[test]
+fn test_backup_with_time_filtering() {
+    let temp_dir = TempDir::new().unwrap();
+    
+    let time_ranges = ["last-hour", "last-day", "last-week", "today"];
+    
+    for time_range in &time_ranges {
+        let backup_path = temp_dir.path().join(format!("backup_{}.tar.gz", time_range));
+        
+        let mut cmd = Command::cargo_bin("chronictl").unwrap();
+        cmd.args([
+            "backup",
+            "--destination", backup_path.to_str().unwrap(),
+            "--time", time_range,
+            "--dry-run"
+        ]);
+        
+        cmd.assert().success();
+    }
+}
+
+#[test]
+fn test_backup_with_event_filtering() {
+    let temp_dir = TempDir::new().unwrap();
+    let backup_path = temp_dir.path().join("filtered_backup.tar.gz");
+    
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--event-types", "screen_capture,file_system",
+        "--dry-run"
+    ]);
+    
+    cmd.assert().success();
+}
+
+#[test]
+fn test_backup_validation_errors() {
+    // Test invalid compression type
+    let temp_dir = TempDir::new().unwrap();
+    let backup_path = temp_dir.path().join("test_backup.tar.gz");
+    
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--compression", "invalid_compression"
+    ]);
+    
+    cmd.assert().failure();
+    
+    // Test missing S3 URI for cloud backup
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--cloud"
+    ]);
+    
+    cmd.assert().failure();
+    
+    // Test missing target drive for auto-backup
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--auto-backup"
+    ]);
+    
+    cmd.assert().failure();
+}
+
+#[test]
+fn test_backup_combined_features() {
+    let temp_dir = TempDir::new().unwrap();
+    let backup_path = temp_dir.path().join("combined_backup.tar.gz");
+    
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--cloud",
+        "--s3-uri", "s3://test-bucket/chronicle",
+        "--auto-backup",
+        "--target-drive", "TestDrive",
+        "--drive-id-type", "volume_label",
+        "--compression", "lz4",
+        "--encryption", "secure_password",
+        "--verify",
+        "--include-metadata",
+        "--dry-run"
+    ]);
+    
+    cmd.assert().success();
+}
+
+#[test]
+fn test_backup_dangerous_options_warning() {
+    let temp_dir = TempDir::new().unwrap();
+    let backup_path = temp_dir.path().join("dangerous_backup.tar.gz");
+    
+    let mut cmd = Command::cargo_bin("chronictl").unwrap();
+    cmd.args([
+        "backup",
+        "--destination", backup_path.to_str().unwrap(),
+        "--auto-backup",
+        "--target-drive", "TestDrive",
+        "--remove-local", // This should trigger a warning/confirmation
+        "--dry-run"
+    ]);
+    
+    // Should either succeed with warning or fail requiring confirmation
+    let output = cmd.output().unwrap();
+    assert!(!output.stdout.is_empty() || !output.stderr.is_empty());
+}
+
+#[test]
 fn test_wipe_command_help() {
     let mut cmd = Command::cargo_bin("chronictl").unwrap();
     cmd.args(["wipe", "--help"]);
